@@ -1,0 +1,23 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "NoteNetwork Backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "ts-node index.ts"
+  },
+  "author": "gustavo",
+  "license": "ISC",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "firebase": "^10.1.0",
+    "firebase-admin": "^11.10.1",
+    "typescript": "^5.1.6"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.13",
+    "@types/firebase": "^3.2.1",
+    "ts-node": "^10.9.1"
+  }
+}

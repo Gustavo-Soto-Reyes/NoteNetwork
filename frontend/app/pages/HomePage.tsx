@@ -1,7 +1,9 @@
-import { View, Text, Button, TextInput, StyleSheet, Alert } from "react-native"
+import { View, Text, Button, TextInput, StyleSheet, Alert, Modal, Pressable } from "react-native"
 import React, { useEffect, useState } from "react"
 import { FIRESTORE_DB } from "../../firebaseConfig"
 import { addDoc, collection } from "firebase/firestore"
+import { Avatar } from '@rneui/themed';
+import avatarMap from "../data/avatarmap";
 import axios from "axios"
 
 const HomePage = ({ navigation }: any) => {
@@ -42,25 +44,58 @@ const HomePage = ({ navigation }: any) => {
                 type: '',
             });
             navigation.navigate('Finder')
-            
+
 
         } catch (error) {
             alert(error);
         }
     }
+    const [modalVisible, setModalVisible] = useState(false);
+    const avatars = Object.entries(avatarMap)
+    const [avatarKey, setAvatarKey] = useState("penguin")
 
     return (
         <View style={styles.container}>
-            <View style={styles.title}>
-                <Text style={styles.text}>
-                    I hope you practiced today
-                </Text>
-            </View>
             <View style={styles.formContainer}>
 
                 <Text style={styles.text}>
                     Please create your account
                 </Text>
+
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        Alert.alert('Modal has been closed.');
+                        setModalVisible(!modalVisible);
+                    }}>
+                    <View style={styles.centeredView}>
+                        <View style={styles.modalView}>
+                            <View>
+                            {avatars.map((item)=>{
+                                return <Avatar
+                                size={45}
+                                rounded
+                                source={item[1]}
+                                onPress={()=>{
+                                    setAvatarKey(item[0]);
+                                    setModalVisible(!modalVisible)
+                                }}
+                            />
+                            })}
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+
+                <Avatar
+                    size={45}
+                    rounded
+                    source={avatarMap[avatarKey]}
+                    onPress={()=>{setModalVisible(true)}}
+                />
+
                 <TextInput
                     style={styles.formItems}
                     placeholder="Name"
@@ -129,7 +164,42 @@ const styles = StyleSheet.create(
         },
         text: {
             color: "#ffffff"
-        }
+        },
+
+
+
+        centeredView: {
+            flex: 1,
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginTop: 22,
+          },
+          modalView: {
+            margin: 20,
+            backgroundColor: 'white',
+            borderRadius: 20,
+            padding: 35,
+            alignItems: 'center',
+            shadowColor: '#000',
+            shadowOffset: {
+              width: 0,
+              height: 2,
+            },
+            shadowOpacity: 0.25,
+            shadowRadius: 4,
+            elevation: 5,
+          },
+          button: {
+            borderRadius: 20,
+            padding: 10,
+            elevation: 2,
+          },
+          buttonOpen: {
+            backgroundColor: '#F194FF',
+          },
+          buttonClose: {
+            backgroundColor: '#2196F3',
+          },
 
     }
 );

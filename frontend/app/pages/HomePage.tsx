@@ -2,7 +2,7 @@ import { View, Text, Button, TextInput, StyleSheet, Alert, Modal, Pressable } fr
 import React, { useEffect, useState } from "react"
 import { FIRESTORE_DB } from "../../firebaseConfig"
 import { addDoc, collection } from "firebase/firestore"
-import { Avatar } from '@rneui/themed';
+import { Avatar, Switch } from '@rneui/themed';
 import avatarMap from "../data/avatarmap";
 import axios from "axios"
 
@@ -12,17 +12,21 @@ const HomePage = ({ navigation }: any) => {
         addDoc(collection(FIRESTORE_DB, 'users'), userObject);
         setUserObject({
             name: '',
+            username: '',
             password: '',
             email: '',
-            type: '',
+            type: 'musician',
+            avatar:'lion'
         });
         alert('user has been created',)
     }
     const [userObject, setUserObject] = useState({
         name: '',
+        username: '',
         password: '',
         email: '',
-        type: 'user',
+        type: 'musician',
+        avatar:'lion'
     })
     const handleTextUpdate = (value: string, id: string) => {
         setUserObject((prevState) => ({
@@ -31,7 +35,7 @@ const HomePage = ({ navigation }: any) => {
         }));
     }
     const handleLogin = () => {
-        navigation.navigate('Finder')
+        navigation.navigate('Login')
     }
 
     const handleCreateUser = async () => {
@@ -39,9 +43,11 @@ const HomePage = ({ navigation }: any) => {
             const response = await axios.post('http://localhost:6000/api/createuser', JSON.stringify(userObject));
             setUserObject({
                 name: '',
+                username: '',
                 password: '',
                 email: '',
-                type: '',
+                type: 'musician',
+                avatar:'lion'
             });
             navigation.navigate('Finder')
 
@@ -52,7 +58,7 @@ const HomePage = ({ navigation }: any) => {
     }
     const [modalVisible, setModalVisible] = useState(false);
     const avatars = Object.entries(avatarMap)
-    const [avatarKey, setAvatarKey] = useState("penguin")
+    // const [avatarKey, setAvatarKey] = useState("lion")
 
     return (
         <View style={styles.container}>
@@ -72,19 +78,20 @@ const HomePage = ({ navigation }: any) => {
                     }}>
                     <View style={styles.centeredView}>
                         <View style={styles.modalView}>
-                            <View>
-                            {avatars.map((item)=>{
-                                return <Avatar
-                                size={45}
-                                rounded
-                                source={item[1]}
-                                onPress={()=>{
-                                    setAvatarKey(item[0]);
-                                    setModalVisible(!modalVisible)
-                                }}
-                            />
-                            })}
-                            </View>
+                            {/* <View > */}
+                                {avatars.map((item) => {
+                                    return <Avatar
+                                        size={45}
+                                        rounded
+                                        source={item[1]}
+                                        onPress={() => {
+                                            // setAvatarKey(item[0]);
+                                            setModalVisible(!modalVisible);
+                                            handleTextUpdate(item[0], 'avatar');
+                                        }}
+                                    />
+                                })}
+                            {/* </View> */}
                         </View>
                     </View>
                 </Modal>
@@ -92,8 +99,8 @@ const HomePage = ({ navigation }: any) => {
                 <Avatar
                     size={45}
                     rounded
-                    source={avatarMap[avatarKey]}
-                    onPress={()=>{setModalVisible(true)}}
+                    source={avatarMap[userObject.avatar]}
+                    onPress={() => { setModalVisible(true)}}
                 />
 
                 <TextInput
@@ -110,17 +117,36 @@ const HomePage = ({ navigation }: any) => {
                 />
                 <TextInput
                     style={styles.formItems}
+                    placeholder="Username"
+                    value={userObject.username}
+                    onChangeText={(value) => handleTextUpdate(value, 'username')}
+                />
+                <TextInput
+                    style={styles.formItems}
                     secureTextEntry={true}
                     placeholder="Password"
                     value={userObject.password}
                     onChangeText={(value) => handleTextUpdate(value, 'password')}
                 />
-                <TextInput
-                    style={styles.formItems}
-                    placeholder="Band or Musician"
-                    value={userObject.type}
-                    onChangeText={(value) => handleTextUpdate(value, 'type')}
-                />
+                <Text style={{color: 'white', fontWeight:'700'}}> I'm looking for:</Text>
+                <View style={styles.switchContainter}>
+                    {userObject.type === 'musician' ?
+                        <Text style={{ color: 'white', fontWeight:'700' }}>Bands</Text> :
+                        <Text style={{ color: 'grey', fontWeight:'700' }}>Bands</Text>
+                    }                    
+                    <Switch
+                        value={userObject.type === 'band'}
+                        onValueChange={(value) => {
+                            userObject.type === 'musician' ?
+                            handleTextUpdate('band', 'type'):
+                            handleTextUpdate('musician', 'type')                                                            
+                        }}
+                    />
+                    {userObject.type === 'band' ?
+                        <Text style={{ color: 'white', fontWeight:'700'  }}>Musicians</Text> :
+                        <Text style={{ color: 'grey', fontWeight:'700'  }}>Musicians</Text>
+                    }
+                </View>
 
                 <Button onPress={handleCreateUser} title="Create Account" />
 
@@ -144,7 +170,6 @@ const styles = StyleSheet.create(
 
         },
         formContainer: {
-            marginTop: 50,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
@@ -165,7 +190,12 @@ const styles = StyleSheet.create(
         text: {
             color: "#ffffff"
         },
-
+        switchContainter: {
+            width:'90%',
+            display: "flex",
+            flexDirection: 'row',
+            justifyContent:'space-evenly',
+        },
 
 
         centeredView: {
@@ -173,8 +203,12 @@ const styles = StyleSheet.create(
             justifyContent: 'center',
             alignItems: 'center',
             marginTop: 22,
-          },
-          modalView: {
+        },
+        modalView: {
+            display:'flex',
+            flexDirection:'row',
+            flexWrap:'wrap',
+            width:"80%",
             margin: 20,
             backgroundColor: 'white',
             borderRadius: 20,
@@ -182,24 +216,24 @@ const styles = StyleSheet.create(
             alignItems: 'center',
             shadowColor: '#000',
             shadowOffset: {
-              width: 0,
-              height: 2,
+                width: 0,
+                height: 2,
             },
             shadowOpacity: 0.25,
             shadowRadius: 4,
             elevation: 5,
-          },
-          button: {
+        },
+        button: {
             borderRadius: 20,
             padding: 10,
             elevation: 2,
-          },
-          buttonOpen: {
+        },
+        buttonOpen: {
             backgroundColor: '#F194FF',
-          },
-          buttonClose: {
+        },
+        buttonClose: {
             backgroundColor: '#2196F3',
-          },
+        },
 
     }
 );

@@ -9,6 +9,17 @@ const avatarMap = {
     "pig": require('../../assets/avatars/pig.png'),
     "reindeer": require('../../assets/avatars/reindeer.png'),
     "whale": require('../../assets/avatars/whale.png'),
+    "concert": require('../../assets/avatars/concert.png'),
+    "dj-mixer": require('../../assets/avatars/dj-mixer.png'),
+    "drum-set": require('../../assets/avatars/drum-set.png'),
+    "french-horn": require('../../assets/avatars/french-horn.png'),
+    "guitar": require('../../assets/avatars/guitar.png'),
+    "microphone": require('../../assets/avatars/microphone.png'),
+    "mixer": require('../../assets/avatars/mixer.png'),
+    "musical": require('../../assets/avatars/musical.png'),
+    "saxophone": require('../../assets/avatars/saxophone.png'),
+    "triangle-instrument": require('../../assets/avatars/triangle-instrument.png'),
+    "trumpet": require('../../assets/avatars/trumpet.png'),
   };
   
   export default avatarMap;
